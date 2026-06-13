@@ -1,19 +1,4 @@
-# Built repository output (local reprepro runs)
-/repo/
-/dist/
-
-# Incoming packages (add locally or via CI; do not commit large binaries by default)
 /packages/*.deb
 /packages/*.changes
 /packages/*.buildinfo
-
-# GPG key material must never be committed
-/*.asc
-/*.gpg
-/private-key*
-/secrets/
 /gpg-export/
-
-# Editor / OS noise
-*~
-.DS_Store

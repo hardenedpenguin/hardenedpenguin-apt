@@ -6,30 +6,12 @@
   <title>Hardened Penguin APT Repository</title>
   <style>
     :root { color-scheme: light dark; font-family: system-ui, sans-serif; line-height: 1.5; }
-    body { max-width: 42rem; margin: 2rem auto; padding: 0 1rem; }
-    code, pre { font-family: ui-monospace, monospace; font-size: 0.9rem; }
-    pre { overflow-x: auto; padding: 1rem; border-radius: 0.5rem; background: rgba(127,127,127,0.15); }
-    a { color: inherit; }
+    body { max-width: 36rem; margin: 2rem auto; padding: 0 1rem; }
   </style>
 </head>
 <body>
   <h1>Hardened Penguin APT Repository</h1>
-  <p>
-    Debian packages for
-    <a href="https://github.com/hardenedpenguin">hardenedpenguin</a>
-    projects (AllStar Link nodes and related tools).
-  </p>
-  <h2>Quick start</h2>
-  <p>Install the archive keyring package once, then use <code>apt</code> normally:</p>
-  <pre>BASE=https://hardenedpenguin.github.io/hardenedpenguin-apt
-PKG=$(curl -fsSL "$BASE/dists/stable/main/binary-all/Packages" | awk '
-  /^Package: hardenedpenguin-archive-keyring$/ { found=1 }
-  found &amp;&amp; /^Filename:/ { print $2; exit }
-')
-curl -fsSLO "$BASE/$PKG"
-sudo apt install "./$(basename "$PKG")"
-sudo apt update
-sudo apt install skywarnplus-ng-all supermon-ng</pre>
-  <p>Full instructions: <a href="https://github.com/hardenedpenguin/hardenedpenguin-apt">GitHub repository</a>.</p>
+  <p>Debian packages from <a href="https://github.com/hardenedpenguin">hardenedpenguin</a>.</p>
+  <p><a href="https://github.com/hardenedpenguin/hardenedpenguin-apt">Repository</a></p>
 </body>
 </html>

@@ -1,18 +1,3 @@
-# Publish the signed APT repository to GitHub Pages.
-#
-# Prerequisites (one-time, repo admin):
-#   1. Settings → Pages → Build and deployment → Source: GitHub Actions
-#   2. Settings → Secrets and variables → Actions:
-#        Secret   GPG_PRIVATE_KEY  — armored private signing key
-#        Variable GPG_KEY_ID         — 40-character key fingerprint
-#
-# Triggers:
-#   - Manual workflow_dispatch (recommended)
-#   - Push to main when packages/*.deb are committed
-#   - repository_dispatch from other repos (event type: publish-debs)
-#
-# When packages/ has no .deb files, SkywarnPlus-NG latest release is synced automatically.
-
 name: Publish APT repository
 
 on:
@@ -165,20 +150,4 @@ jobs:
         uses: actions/deploy-pages@v4
 
       - name: Summary
-        run: |
-          {
-            echo '## APT repository published'
-            echo
-            echo '**One-time setup on each node:**'
-            echo '```bash'
-            echo 'BASE=https://hardenedpenguin.github.io/hardenedpenguin-apt'
-            echo 'PKG=$(curl -fsSL "$BASE/dists/stable/main/binary-all/Packages" | awk '\''/^Package: hardenedpenguin-archive-keyring$/{f=1} f&&/^Filename:/{print $2;exit}'\'')'
-            echo 'curl -fsSLO "$BASE/$PKG" && sudo apt install "./$(basename "$PKG")"'
-            echo 'sudo apt update'
-            echo '```'
-            echo
-            echo '**Install packages:**'
-            echo '```bash'
-            echo 'sudo apt install skywarnplus-ng-all supermon-ng'
-            echo '```'
-          } >> "$GITHUB_STEP_SUMMARY"
+        run: echo "Published to ${{ steps.deployment.outputs.page_url }}" >> "$GITHUB_STEP_SUMMARY"
