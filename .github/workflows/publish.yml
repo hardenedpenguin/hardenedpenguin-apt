@@ -7,9 +7,11 @@
 #        Variable GPG_KEY_ID         — 40-character key fingerprint
 #
 # Triggers:
-#   - Push to main when packages/*.deb change
-#   - Manual workflow_dispatch (optional sync from GitHub releases first)
+#   - Manual workflow_dispatch (recommended)
+#   - Push to main when packages/*.deb are committed
 #   - repository_dispatch from other repos (event type: publish-debs)
+#
+# When packages/ has no .deb files, SkywarnPlus-NG latest release is synced automatically.
 
 name: Publish APT repository
 
@@ -18,18 +20,15 @@ on:
     branches: [main]
     paths:
       - 'packages/**'
-      - 'conf/**'
-      - 'public/**'
-      - 'keyring/**'
       - '.github/workflows/publish.yml'
   workflow_dispatch:
     inputs:
       sync_skywarnplus:
-        description: Download SkywarnPlus-NG release .debs before publish
+        description: Download SkywarnPlus-NG release .debs (auto when packages/ is empty)
         type: boolean
-        default: false
+        default: true
       sync_supermon:
-        description: Download supermon-ng release .debs before publish
+        description: Download supermon-ng release .debs (only if published on GitHub Releases)
         type: boolean
         default: false
       release_tag:
@@ -73,8 +72,9 @@ jobs:
 
       - name: Sync SkywarnPlus-NG release assets
         if: >-
-          inputs.sync_skywarnplus == true ||
-          github.event.client_payload.sync_skywarnplus == true
+          inputs.sync_skywarnplus != false ||
+          github.event.client_payload.sync_skywarnplus == true ||
+          hashFiles('packages/*.deb') == ''
         run: |
           tag="${{ inputs.release_tag || github.event.client_payload.release_tag || '' }}"
           chmod +x scripts/sync-github-release.sh
@@ -114,7 +114,7 @@ jobs:
           shopt -s nullglob
           debs=(packages/*.deb)
           if ((${#debs[@]} == 0)); then
-            echo "No .deb files in packages/. Add files locally or enable sync inputs." >&2
+            echo "No .deb files in packages/. SkywarnPlus-NG sync should have run; check earlier steps." >&2
             exit 1
           fi
           ls -lh packages/*.deb
