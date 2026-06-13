@@ -13,8 +13,13 @@ Users install a single archive-keyring package once, then install any published 
 Download and install the archive keyring package (registers the GPG key and adds the apt source):
 
 ```bash
-curl -fsSLO https://hardenedpenguin.github.io/hardenedpenguin-apt/pool/main/h/hardenedpenguin-archive-keyring/hardenedpenguin-archive-keyring_1.0_all.deb
-sudo apt install ./hardenedpenguin-archive-keyring_1.0_all.deb
+BASE=https://hardenedpenguin.github.io/hardenedpenguin-apt
+PKG=$(curl -fsSL "$BASE/dists/stable/main/binary-all/Packages" | awk '
+  /^Package: hardenedpenguin-archive-keyring$/ { found=1 }
+  found && /^Filename:/ { print $2; exit }
+')
+curl -fsSLO "$BASE/$PKG"
+sudo apt install "./$(basename "$PKG")"
 sudo apt update
 ```
 
@@ -142,7 +147,7 @@ Published output (on GitHub Pages) follows the usual Debian layout: `dists/`, `p
 
 ## Supported architectures
 
-Packages are indexed for **amd64**, **arm64**, and **all** (architecture-independent packages such as `supermon-ng`).
+Packages are indexed for **amd64** and **arm64**. Packages marked `Architecture: all` (for example `supermon-ng`) are served on both automatically — do not list `all` in the reprepro config.
 
 The apt **codename** is `stable` — it is not tied to a specific Debian release name; packages target ASL3 / Debian bookworm and trixie nodes.
 

@@ -49,10 +49,12 @@ concurrency:
 
 env:
   REPO_NAME: hardenedpenguin
-  KEYRING_NAME: hardenedpenguin-archive-keyring
+  # morph027/apt-repo-action appends "-keyring" to this name
+  KEYRING_NAME: hardenedpenguin-archive
   CODENAME: stable
   COMPONENTS: main
-  ARCHITECTURES: amd64 arm64 all
+  # Do not list "all" — reprepro rejects it; Architecture: all packages still work
+  ARCHITECTURES: amd64 arm64
   REPO_BASE_URL: https://hardenedpenguin.github.io/hardenedpenguin-apt/
 
 jobs:
@@ -138,7 +140,6 @@ jobs:
           import-from-repo-url: |
             deb-amd64 ${{ env.REPO_BASE_URL }} ${{ env.CODENAME }} ${{ env.COMPONENTS }}
             deb-arm64 ${{ env.REPO_BASE_URL }} ${{ env.CODENAME }} ${{ env.COMPONENTS }}
-            deb-all ${{ env.REPO_BASE_URL }} ${{ env.CODENAME }} ${{ env.COMPONENTS }}
           import-from-repo-failure-allow: true
 
       - name: Add landing page and pubkey
@@ -170,8 +171,9 @@ jobs:
             echo
             echo '**One-time setup on each node:**'
             echo '```bash'
-            echo 'curl -fsSLO ${{ steps.deployment.outputs.page_url }}pool/main/h/hardenedpenguin-archive-keyring/hardenedpenguin-archive-keyring_1.0_all.deb'
-            echo 'sudo apt install ./hardenedpenguin-archive-keyring_1.0_all.deb'
+            echo 'BASE=https://hardenedpenguin.github.io/hardenedpenguin-apt'
+            echo 'PKG=$(curl -fsSL "$BASE/dists/stable/main/binary-all/Packages" | awk '\''/^Package: hardenedpenguin-archive-keyring$/{f=1} f&&/^Filename:/{print $2;exit}'\'')'
+            echo 'curl -fsSLO "$BASE/$PKG" && sudo apt install "./$(basename "$PKG")"'
             echo 'sudo apt update'
             echo '```'
             echo

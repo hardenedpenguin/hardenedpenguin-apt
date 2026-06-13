@@ -21,8 +21,13 @@
   </p>
   <h2>Quick start</h2>
   <p>Install the archive keyring package once, then use <code>apt</code> normally:</p>
-  <pre>curl -fsSLO https://hardenedpenguin.github.io/hardenedpenguin-apt/pool/main/h/hardenedpenguin-archive-keyring/hardenedpenguin-archive-keyring_1.0_all.deb
-sudo apt install ./hardenedpenguin-archive-keyring_1.0_all.deb
+  <pre>BASE=https://hardenedpenguin.github.io/hardenedpenguin-apt
+PKG=$(curl -fsSL "$BASE/dists/stable/main/binary-all/Packages" | awk '
+  /^Package: hardenedpenguin-archive-keyring$/ { found=1 }
+  found &amp;&amp; /^Filename:/ { print $2; exit }
+')
+curl -fsSLO "$BASE/$PKG"
+sudo apt install "./$(basename "$PKG")"
 sudo apt update
 sudo apt install skywarnplus-ng-all supermon-ng</pre>
   <p>Full instructions: <a href="https://github.com/hardenedpenguin/hardenedpenguin-apt">GitHub repository</a>.</p>
