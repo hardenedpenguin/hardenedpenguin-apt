@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'packages/**'
+      - 'keyring/**'
       - '.github/workflows/publish.yml'
   workflow_dispatch:
     inputs:
@@ -105,6 +106,14 @@ jobs:
             exit 1
           fi
           ls -lh packages/*.deb
+
+      - name: Build archive keyring package
+        env:
+          GPG_KEY_ID: ${{ vars.GPG_KEY_ID }}
+        run: |
+          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
+          chmod +x keyring/build.sh
+          ./keyring/build.sh packages
 
       - name: Create APT repository
         id: create-apt-repo
