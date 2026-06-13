@@ -9,16 +9,12 @@ on:
       - '.github/workflows/publish.yml'
   workflow_dispatch:
     inputs:
-      sync_skywarnplus:
-        description: Download SkywarnPlus-NG release .debs (auto when packages/ is empty)
-        type: boolean
-        default: true
       sync_supermon:
-        description: Download supermon-ng release .debs (only if published on GitHub Releases)
+        description: Also download supermon-ng release .debs (when published on GitHub Releases)
         type: boolean
         default: false
       release_tag:
-        description: Optional tag for synced releases (empty = latest)
+        description: Optional tag for synced releases (empty = latest per repo)
         type: string
         default: ''
   repository_dispatch:
@@ -58,19 +54,21 @@ jobs:
       - name: Install tools
         run: sudo apt-get update && sudo apt-get install -y reprepro gnupg curl jq
 
-      - name: Sync SkywarnPlus-NG release assets
-        if: >-
-          inputs.sync_skywarnplus != false ||
-          github.event.client_payload.sync_skywarnplus == true ||
-          hashFiles('packages/*.deb') == ''
+      - name: Sync GitHub release packages
         run: |
           tag="${{ inputs.release_tag || github.event.client_payload.release_tag || '' }}"
           chmod +x scripts/sync-github-release.sh
-          if [[ -n "$tag" ]]; then
-            ./scripts/sync-github-release.sh hardenedpenguin/SkywarnPlus-NG "$tag"
-          else
-            ./scripts/sync-github-release.sh hardenedpenguin/SkywarnPlus-NG
-          fi
+          sync_repo() {
+            if [[ -n "$tag" ]]; then
+              ./scripts/sync-github-release.sh "$1" "$tag"
+            else
+              ./scripts/sync-github-release.sh "$1"
+            fi
+          }
+          sync_repo hardenedpenguin/SkywarnPlus-NG
+          sync_repo hardenedpenguin/saytime_weather_rb
+          sync_repo hardenedpenguin/sayip-reboot-halt-saypublicip
+          sync_repo hardenedpenguin/internet_monitor_rb
 
       - name: Sync supermon-ng release assets
         if: >-
@@ -102,7 +100,7 @@ jobs:
           shopt -s nullglob
           debs=(packages/*.deb)
           if ((${#debs[@]} == 0)); then
-            echo "No .deb files in packages/. SkywarnPlus-NG sync should have run; check earlier steps." >&2
+            echo "No .deb files in packages/. Release sync should have run; check earlier steps." >&2
             exit 1
           fi
           ls -lh packages/*.deb

@@ -7,17 +7,19 @@ Signed APT repository for [hardenedpenguin](https://github.com/hardenedpenguin) 
 ## Install
 
 ```bash
-BASE=https://hardenedpenguin.github.io/hardenedpenguin-apt
-ARCH=$(dpkg --print-architecture)
-PKG=$(curl -fsSL "$BASE/dists/stable/main/binary-${ARCH}/Packages" | awk '
-  /^Package: hardenedpenguin-archive-keyring$/ { found=1 }
-  found && /^Filename:/ { print $2; exit }
-')
-curl -fsSLO "$BASE/$PKG"
-sudo apt install "./$(basename "$PKG")"
+curl -fsSLO https://hardenedpenguin.github.io/hardenedpenguin-apt/pool/main/h/hardenedpenguin-archive-keyring/hardenedpenguin-archive-keyring_1.0_all.deb
+sudo apt install ./hardenedpenguin-archive-keyring_1.0_all.deb
 sudo apt update
-sudo apt install skywarnplus-ng-all
-sudo systemctl enable --now skywarnplus-ng
 ```
 
-The **`hardenedpenguin-archive-keyring`** package installs the signing key and **`/etc/apt/sources.list.d/hardenedpenguin.list`**. After that, use **`apt install`**, **`apt upgrade`**, and **`apt remove`** normally.
+The keyring package adds the signing key and **`/etc/apt/sources.list.d/hardenedpenguin.list`**. Install packages normally, for example:
+
+```bash
+sudo apt install skywarnplus-ng-all saytime-weather-rb internet-monitor
+```
+
+**`sayip-node-utils`** may ask for your node number on install. For a non-interactive install:
+
+```bash
+sudo NODE_NUMBER=12345 apt install sayip-node-utils
+```
