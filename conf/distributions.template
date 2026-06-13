@@ -1,0 +1,8 @@
+Origin: Hardened Penguin
+Label: Hardened Penguin APT Repository
+Suite: stable
+Codename: stable
+Architectures: amd64 arm64 all
+Components: main
+Description: Third-party Debian packages built by hardenedpenguin
+SignWith: @SIGN_WITH@
