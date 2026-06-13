@@ -18,6 +18,13 @@ The keyring package adds the signing key and **`/etc/apt/sources.list.d/hardened
 sudo apt install skywarnplus-ng-all saytime-weather-rb internet-monitor
 ```
 
+| APT package | Project |
+|-------------|---------|
+| `skywarnplus-ng-all` | [SkywarnPlus-NG](https://github.com/hardenedpenguin/SkywarnPlus-NG) |
+| `saytime-weather-rb` | [saytime_weather_rb](https://github.com/hardenedpenguin/saytime_weather_rb) |
+| `sayip-node-utils` | [sayip-reboot-halt-saypublicip](https://github.com/hardenedpenguin/sayip-reboot-halt-saypublicip) |
+| `internet-monitor` | [internet_monitor_rb](https://github.com/hardenedpenguin/internet_monitor_rb) |
+
 **`sayip-node-utils`** may ask for your node number on install. For a non-interactive install:
 
 ```bash
