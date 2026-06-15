@@ -1,0 +1,39 @@
+# Reusable workflow: trigger hardenedpenguin-apt publish after a package release.
+#
+# Callers need repository secret APT_REPO_DISPATCH_TOKEN (classic PAT with repo scope,
+# or fine-grained token with Actions read/write on hardenedpenguin/hardenedpenguin-apt).
+
+name: Dispatch APT repository publish
+
+on:
+  workflow_call:
+    secrets:
+      APT_REPO_DISPATCH_TOKEN:
+        required: false
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger hardenedpenguin-apt publish
+        env:
+          TOKEN: ${{ secrets.APT_REPO_DISPATCH_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${TOKEN}" ]; then
+            echo "::warning::APT_REPO_DISPATCH_TOKEN is not set; skipping apt repo publish."
+            exit 0
+          fi
+          http_code=$(curl -sS -o /tmp/dispatch-response.json -w "%{http_code}" \
+            -X POST \
+            -H "Authorization: Bearer ${TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/hardenedpenguin/hardenedpenguin-apt/dispatches \
+            -d '{"event_type":"publish-debs"}')
+          if [ "$http_code" != "204" ]; then
+            echo "::error::repository_dispatch failed (HTTP ${http_code})"
+            cat /tmp/dispatch-response.json
+            exit 1
+          fi
+          echo "Triggered hardenedpenguin-apt publish workflow."
