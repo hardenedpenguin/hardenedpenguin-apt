@@ -19,9 +19,7 @@ The keyring package adds the signing key and **`/etc/apt/sources.list.d/hardened
 | Package | Description |
 |---------|-------------|
 | `hardenedpenguin-archive-keyring` | Repository signing key and apt source (install once via curl above) |
-| `skywarnplus-ng-all` | [SkywarnPlus-NG](https://github.com/hardenedpenguin/SkywarnPlus-NG) app + default Piper voice (recommended) |
-| `skywarnplus-ng` | SkywarnPlus-NG application only |
-| `skywarnplus-ng-voice-en-us-amy-low` | Default Piper voice model for SkywarnPlus-NG |
+| `skywarnplus-ng` | [SkywarnPlus-NG](https://github.com/hardenedpenguin/SkywarnPlus-NG) weather alerts, dashboard, and Piper voice |
 | `supermon-ng` | [Supermon-ng](https://github.com/hardenedpenguin/supermon-ng) AllStar node monitoring dashboard |
 | `saytime-weather-rb` | [saytime_weather_rb](https://github.com/hardenedpenguin/saytime_weather_rb) time and weather announcements |
 | `sayip-node-utils` | [sayip-reboot-halt-saypublicip](https://github.com/hardenedpenguin/sayip-reboot-halt-saypublicip) SayIP, reboot, and halt via DTMF |
@@ -30,7 +28,7 @@ The keyring package adds the signing key and **`/etc/apt/sources.list.d/hardened
 Example:
 
 ```bash
-sudo apt install skywarnplus-ng-all supermon-ng saytime-weather-rb internet-monitor
+sudo apt install skywarnplus-ng supermon-ng saytime-weather-rb internet-monitor
 sudo NODE_NUMBER=12345 apt install sayip-node-utils
 ```
 
