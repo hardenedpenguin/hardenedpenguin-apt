@@ -1,5 +1,11 @@
 # hardenedpenguin-apt
 
+[![Publish APT repository](https://github.com/hardenedpenguin/hardenedpenguin-apt/actions/workflows/publish.yml/badge.svg)](https://github.com/hardenedpenguin/hardenedpenguin-apt/actions/workflows/publish.yml)
+[![APT repository](https://img.shields.io/badge/apt-hardenedpenguin.github.io-blue?logo=github)](https://hardenedpenguin.github.io/hardenedpenguin-apt/)
+[![Architectures](https://img.shields.io/badge/architectures-amd64%20%7C%20arm64-informational)](https://hardenedpenguin.github.io/hardenedpenguin-apt/dists/stable/)
+[![Debian](https://img.shields.io/badge/Debian-stable-red?logo=debian)](https://hardenedpenguin.github.io/hardenedpenguin-apt/dists/stable/)
+[![Signed packages](https://img.shields.io/badge/packages-GPG%20signed-green)](https://hardenedpenguin.github.io/hardenedpenguin-apt/dists/stable/Release.gpg)
+
 Signed APT repository for [hardenedpenguin](https://github.com/hardenedpenguin) Debian packages.
 
 **https://hardenedpenguin.github.io/hardenedpenguin-apt/** · codename `stable` · `amd64` / `arm64`
