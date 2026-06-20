@@ -13,6 +13,7 @@ Signed APT repository for [hardenedpenguin](https://github.com/hardenedpenguin) 
 ## Install
 
 ```bash
+cd /tmp
 curl -fsSLO https://hardenedpenguin.github.io/hardenedpenguin-apt/pool/main/h/hardenedpenguin-archive-keyring/hardenedpenguin-archive-keyring_1.0_all.deb
 sudo apt install ./hardenedpenguin-archive-keyring_1.0_all.deb
 sudo apt update
