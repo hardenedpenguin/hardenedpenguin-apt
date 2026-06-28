@@ -31,11 +31,12 @@ The keyring package adds the signing key and **`/etc/apt/sources.list.d/hardened
 | `saytime-weather-rb` | [saytime_weather_rb](https://github.com/hardenedpenguin/saytime_weather_rb) time and weather announcements |
 | `sayip-node-utils` | [sayip-reboot-halt-saypublicip](https://github.com/hardenedpenguin/sayip-reboot-halt-saypublicip) SayIP, reboot, and halt via DTMF |
 | `internet-monitor` | [internet_monitor_rb](https://github.com/hardenedpenguin/internet_monitor_rb) Internet connectivity monitor with audio alerts |
+| `cap-alert` | [cap-alert](https://github.com/hardenedpenguin/cap-alert) NWS weather alerts for AllStar/Asterisk nodes |
 
 Example:
 
 ```bash
-sudo apt install skywarnplus-ng supermon-ng saytime-weather-rb internet-monitor
+sudo apt install skywarnplus-ng supermon-ng saytime-weather-rb internet-monitor cap-alert
 sudo NODE_NUMBER=12345 apt install sayip-node-utils
 ```
 

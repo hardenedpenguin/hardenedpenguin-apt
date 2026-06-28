@@ -68,6 +68,7 @@ jobs:
           sync_repo hardenedpenguin/saytime_weather_rb
           sync_repo hardenedpenguin/sayip-reboot-halt-saypublicip
           sync_repo hardenedpenguin/internet_monitor_rb
+          sync_repo hardenedpenguin/cap-alert
 
       - name: Copy dispatched .deb URLs
         if: github.event_name == 'repository_dispatch' && github.event.client_payload.deb_urls
