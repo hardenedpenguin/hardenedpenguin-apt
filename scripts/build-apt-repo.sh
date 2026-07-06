@@ -22,22 +22,27 @@ rm -rf "$REPREPRO_BASE"
 mkdir -p "$REPREPRO_BASE/conf"
 
 cat >"$REPREPRO_BASE/conf/distributions" <<EOF
+Codename: stable
+Suite: stable
 Origin: ${ORIGIN}
 Label: ${LABEL}
 SignWith: ${SIGN_WITH}
-
-Codename: stable
-Suite: stable
 Architectures: amd64 arm64
 Components: main
 
 Codename: bookworm
 Suite: bookworm
+Origin: ${ORIGIN}
+Label: ${LABEL}
+SignWith: ${SIGN_WITH}
 Architectures: amd64 arm64
 Components: main
 
 Codename: trixie
 Suite: trixie
+Origin: ${ORIGIN}
+Label: ${LABEL}
+SignWith: ${SIGN_WITH}
 Architectures: amd64 arm64
 Components: main
 EOF
