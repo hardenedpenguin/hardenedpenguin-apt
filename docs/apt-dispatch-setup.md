@@ -17,4 +17,12 @@ Package repos call `dispatch-apt-publish.yml` after uploading release `.deb` fil
 
 3. Tag and release as usual. The release workflow triggers `repository_dispatch` on this repo, which runs **Publish APT repository**.
 
+Published packages are split into apt suites:
+
+- **`bookworm`** — `*.deb12_*` builds (Debian 12 / Python 3.11)
+- **`trixie`** — `*.deb13_*` and legacy `skywarnplus-ng_*` builds (Debian 13 / Python 3.13)
+- **`stable`** — all other packages
+
+The **`hardenedpenguin-archive-keyring`** package (v1.1+) configures apt to use the matching OS suite plus **`stable`**.
+
 If the secret is missing, release workflows still succeed; apt publish is skipped with a warning until the secret is configured.

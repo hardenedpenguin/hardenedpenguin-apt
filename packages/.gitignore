@@ -1,0 +1,9 @@
+# Incoming downloads before suite split; suite dirs are build artifacts.
+packages/incoming/*
+packages/stable/*
+packages/bookworm/*
+packages/trixie/*
+!packages/incoming/.gitkeep
+!packages/stable/.gitkeep
+!packages/bookworm/.gitkeep
+!packages/trixie/.gitkeep

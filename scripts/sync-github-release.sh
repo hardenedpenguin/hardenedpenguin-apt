@@ -3,7 +3,7 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-PACKAGES_DIR="${PACKAGES_DIR:-$REPO_ROOT/packages}"
+PACKAGES_DIR="${PACKAGES_DIR:-$REPO_ROOT/packages/incoming}"
 ARCH_FILTER="${ARCH_FILTER:-}"   # e.g. amd64 or arm64; empty = all .deb assets
 
 usage() {

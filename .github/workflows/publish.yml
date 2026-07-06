@@ -8,6 +8,7 @@ on:
     paths:
       - 'packages/**'
       - 'keyring/**'
+      - 'scripts/**'
       - '.github/workflows/publish.yml'
   workflow_dispatch:
     inputs:
@@ -28,20 +29,11 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  REPO_NAME: hardenedpenguin
-  # morph027/apt-repo-action appends "-keyring" to this name
-  KEYRING_NAME: hardenedpenguin-archive
-  CODENAME: stable
-  COMPONENTS: main
-  # Do not list "all" — reprepro rejects it; Architecture: all packages still work
-  ARCHITECTURES: amd64 arm64
   REPO_BASE_URL: https://hardenedpenguin.github.io/hardenedpenguin-apt/
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    outputs:
-      keyring: ${{ steps.create-apt-repo.outputs.keyring }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -51,6 +43,14 @@ jobs:
 
       - name: Install tools
         run: sudo apt-get update && sudo apt-get install -y reprepro gnupg curl jq
+
+      - name: Prepare package incoming directory
+        run: mkdir -p packages/incoming
+
+      - name: Import existing published packages
+        run: |
+          chmod +x scripts/import-from-published-repo.sh
+          ./scripts/import-from-published-repo.sh || true
 
       - name: Sync GitHub release packages
         run: |
@@ -75,22 +75,11 @@ jobs:
         env:
           DEB_URLS: ${{ toJson(github.event.client_payload.deb_urls) }}
         run: |
-          mkdir -p packages
           echo "$DEB_URLS" | jq -r '.[]' | while read -r url; do
             fname="$(basename "$url")"
             echo "Fetching $fname ..."
-            curl -fsSL -o "packages/$fname" "$url"
+            curl -fsSL -o "packages/incoming/$fname" "$url"
           done
-
-      - name: Verify packages present
-        run: |
-          shopt -s nullglob
-          debs=(packages/*.deb)
-          if ((${#debs[@]} == 0)); then
-            echo "No .deb files in packages/. Release sync should have run; check earlier steps." >&2
-            exit 1
-          fi
-          ls -lh packages/*.deb
 
       - name: Build archive keyring package
         env:
@@ -98,39 +87,47 @@ jobs:
         run: |
           echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
           chmod +x keyring/build.sh
-          ./keyring/build.sh packages
+          ./keyring/build.sh packages/incoming
 
-      - name: Create APT repository
-        id: create-apt-repo
-        uses: morph027/apt-repo-action@v3
-        with:
-          repo-name: ${{ env.REPO_NAME }}
-          keyring-name: ${{ env.KEYRING_NAME }}
-          origin: Hardened Penguin
-          label: Hardened Penguin APT Repository
-          suite: stable
-          codename: ${{ env.CODENAME }}
-          components: ${{ env.COMPONENTS }}
-          architectures: ${{ env.ARCHITECTURES }}
-          scan-dir: ./packages
-          signing-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          maintainer: Jory A. Pratt, W5GLE <geekypenguin@gmail.com>
-          homepage: https://github.com/hardenedpenguin/hardenedpenguin-apt
-          import-from-repo-url: |
-            deb-amd64 ${{ env.REPO_BASE_URL }} ${{ env.CODENAME }} ${{ env.COMPONENTS }}
-            deb-arm64 ${{ env.REPO_BASE_URL }} ${{ env.CODENAME }} ${{ env.COMPONENTS }}
-          import-from-repo-failure-allow: true
+      - name: Split packages by Debian suite
+        run: |
+          chmod +x scripts/split-packages-by-suite.sh
+          ./scripts/split-packages-by-suite.sh
+
+      - name: Verify packages present
+        run: |
+          for suite in stable bookworm trixie; do
+            count=$(find "packages/$suite" -maxdepth 1 -name '*.deb' 2>/dev/null | wc -l)
+            echo "$suite: $count package(s)"
+          done
+          total=$(find packages/stable packages/bookworm packages/trixie -maxdepth 1 -name '*.deb' 2>/dev/null | wc -l)
+          if [[ "$total" -eq 0 ]]; then
+            echo "No .deb files after split; check sync/import steps." >&2
+            exit 1
+          fi
+          ls -lh packages/*/*.deb
+
+      - name: Build signed APT repository
+        id: build-apt-repo
+        env:
+          GPG_KEY_ID: ${{ vars.GPG_KEY_ID }}
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: |
+          chmod +x scripts/build-apt-repo.sh
+          out="$(mktemp -d)"
+          ./scripts/build-apt-repo.sh "$out"
+          echo "dir=$out" >> "$GITHUB_OUTPUT"
 
       - name: Add landing page and pubkey
         run: |
-          cp public/index.html "${{ steps.create-apt-repo.outputs.dir }}/index.html"
           echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
-          gpg --armor --export "${{ vars.GPG_KEY_ID }}" > "${{ steps.create-apt-repo.outputs.dir }}/pubkey.asc"
+          cp public/index.html "${{ steps.build-apt-repo.outputs.dir }}/index.html"
+          gpg --armor --export "${{ vars.GPG_KEY_ID }}" > "${{ steps.build-apt-repo.outputs.dir }}/pubkey.asc"
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ steps.create-apt-repo.outputs.dir }}
+          path: ${{ steps.build-apt-repo.outputs.dir }}
 
   deploy:
     runs-on: ubuntu-latest

@@ -2,12 +2,10 @@
 # Build hardenedpenguin-archive-keyring for inclusion in the published repo.
 set -euo pipefail
 
-OUT_DIR="${1:-packages}"
+OUT_DIR="${1:-packages/incoming}"
 SIGN_WITH="${GPG_KEY_ID:?GPG_KEY_ID is required}"
-KEYRING_VERSION="${KEYRING_VERSION:-1.0}"
+KEYRING_VERSION="${KEYRING_VERSION:-1.1}"
 REPO_URL="${REPO_URL:-https://hardenedpenguin.github.io/hardenedpenguin-apt/}"
-CODENAME="${CODENAME:-stable}"
-COMPONENT="${COMPONENT:-main}"
 KEYRING_NAME="hardenedpenguin-archive-keyring"
 
 staging="$(mktemp -d)"
@@ -20,9 +18,34 @@ mkdir -p "$staging/DEBIAN" \
 gpg --export-options export-minimal --export "$SIGN_WITH" \
   >"$staging/usr/share/keyrings/${KEYRING_NAME}.gpg"
 
-cat >"$staging/etc/apt/sources.list.d/hardenedpenguin.list" <<EOF
-deb [signed-by=/usr/share/keyrings/${KEYRING_NAME}.gpg] ${REPO_URL} ${CODENAME} ${COMPONENT}
-EOF
+# Placeholder; postinst writes the suite-aware source list on install/upgrade.
+: >"$staging/etc/apt/sources.list.d/hardenedpenguin.list"
+
+cat >"$staging/DEBIAN/postinst" <<'POSTINST'
+#!/bin/sh
+set -e
+REPO_URL="https://hardenedpenguin.github.io/hardenedpenguin-apt/"
+KEYRING="/usr/share/keyrings/hardenedpenguin-archive-keyring.gpg"
+LIST="/etc/apt/sources.list.d/hardenedpenguin.list"
+
+suite=stable
+if [ -f /etc/os-release ]; then
+  # shellcheck disable=SC1091
+  . /etc/os-release
+  case "${VERSION_CODENAME:-}" in
+    bookworm) suite=bookworm ;;
+    trixie|forky) suite=trixie ;;
+  esac
+fi
+
+{
+  echo "deb [signed-by=${KEYRING}] ${REPO_URL} ${suite} main"
+  echo "deb [signed-by=${KEYRING}] ${REPO_URL} stable main"
+} >"${LIST}"
+
+exit 0
+POSTINST
+chmod 755 "$staging/DEBIAN/postinst"
 
 cat >"$staging/DEBIAN/control" <<EOF
 Package: ${KEYRING_NAME}
@@ -33,7 +56,8 @@ Section: misc
 Priority: optional
 Homepage: https://github.com/hardenedpenguin/hardenedpenguin-apt
 Description: GPG archive key and apt source for Hardened Penguin packages
- Installs the repository signing key and adds the hardenedpenguin apt source.
+ Installs the repository signing key and adds hardenedpenguin apt sources
+ matched to your Debian release (bookworm/trixie) plus the shared stable suite.
 EOF
 
 mkdir -p "$OUT_DIR"
