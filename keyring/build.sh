@@ -4,7 +4,7 @@ set -euo pipefail
 
 OUT_DIR="${1:-packages/incoming}"
 SIGN_WITH="${GPG_KEY_ID:?GPG_KEY_ID is required}"
-KEYRING_VERSION="${KEYRING_VERSION:-1.1}"
+KEYRING_VERSION="${KEYRING_VERSION:-1.2}"
 REPO_URL="${REPO_URL:-https://hardenedpenguin.github.io/hardenedpenguin-apt/}"
 KEYRING_NAME="hardenedpenguin-archive-keyring"
 
@@ -39,8 +39,8 @@ if [ -f /etc/os-release ]; then
 fi
 
 {
-  echo "deb [signed-by=${KEYRING}] ${REPO_URL} ${suite} main"
-  echo "deb [signed-by=${KEYRING}] ${REPO_URL} stable main"
+  echo "deb [arch=amd64,arm64 signed-by=${KEYRING}] ${REPO_URL} ${suite} main"
+  echo "deb [arch=amd64,arm64 signed-by=${KEYRING}] ${REPO_URL} stable main"
 } >"${LIST}"
 
 exit 0
@@ -58,6 +58,7 @@ Homepage: https://github.com/hardenedpenguin/hardenedpenguin-apt
 Description: GPG archive key and apt source for Hardened Penguin packages
  Installs the repository signing key and adds hardenedpenguin apt sources
  matched to your Debian release (bookworm/trixie) plus the shared stable suite.
+ Only amd64 and arm64 are enabled (32-bit armhf is not supported).
 EOF
 
 mkdir -p "$OUT_DIR"

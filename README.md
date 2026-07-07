@@ -14,15 +14,16 @@ Signed APT repository for [hardenedpenguin](https://github.com/hardenedpenguin) 
 
 ```bash
 cd /tmp
-curl -fsSLO https://hardenedpenguin.github.io/hardenedpenguin-apt/pool/main/h/hardenedpenguin-archive-keyring/hardenedpenguin-archive-keyring_1.1_all.deb
-sudo apt install ./hardenedpenguin-archive-keyring_1.1_all.deb
+curl -fsSLO https://hardenedpenguin.github.io/hardenedpenguin-apt/pool/main/h/hardenedpenguin-archive-keyring/hardenedpenguin-archive-keyring_1.2_all.deb
+sudo apt install ./hardenedpenguin-archive-keyring_1.2_all.deb
 sudo apt update
 ```
 
-The keyring package (v1.1+) installs the signing key and **`/etc/apt/sources.list.d/hardenedpenguin.list`**, automatically enabling:
+The keyring package (v1.2+) installs the signing key and **`/etc/apt/sources.list.d/hardenedpenguin.list`**, automatically enabling:
 
 - Your OS suite (**`bookworm`** on Debian 12, **`trixie`** on Debian 13) — for suite-specific builds such as `skywarnplus-ng_*_deb12_*` / `*_deb13_*`
 - The shared **`stable`** suite — for packages without a Debian revision suffix (supermon-ng, cap-alert, etc.)
+- **`arch=amd64,arm64`** only — avoids armhf errors on multiarch ASL3/RPi nodes (32-bit is not supported)
 
 After that, install packages with **`apt install`**, **`apt upgrade`**, and **`apt remove`**.
 

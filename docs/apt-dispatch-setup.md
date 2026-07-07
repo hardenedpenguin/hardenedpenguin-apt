@@ -23,6 +23,6 @@ Published packages are split into apt suites:
 - **`trixie`** — `*.deb13_*` and legacy `skywarnplus-ng_*` builds (Debian 13 / Python 3.13)
 - **`stable`** — all other packages
 
-The **`hardenedpenguin-archive-keyring`** package (v1.1+) configures apt to use the matching OS suite plus **`stable`**.
+The **`hardenedpenguin-archive-keyring`** package (v1.2+) configures apt to use the matching OS suite plus **`stable`**, limited to **`amd64`** and **`arm64`**.
 
 If the secret is missing, release workflows still succeed; apt publish is skipped with a warning until the secret is configured.
