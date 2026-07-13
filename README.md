@@ -38,6 +38,7 @@ After that, install packages with **`apt install`**, **`apt upgrade`**, and **`a
 | `sayip-node-utils` | [sayip-reboot-halt-saypublicip](https://github.com/hardenedpenguin/sayip-reboot-halt-saypublicip) SayIP, reboot, and halt via DTMF |
 | `internet-monitor` | [internet_monitor_rb](https://github.com/hardenedpenguin/internet_monitor_rb) Internet connectivity monitor with audio alerts |
 | `cap-alert` | [cap-alert](https://github.com/hardenedpenguin/cap-alert) NWS weather alerts for AllStar/Asterisk nodes |
+| `anytone` | [AnyTone_CPS](https://github.com/hardenedpenguin/AnyTone_CPS) Linux CPS for Anytone D878UV / D878UV II / D578UV |
 
 Example:
 
