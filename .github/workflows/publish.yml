@@ -70,6 +70,7 @@ jobs:
           sync_repo hardenedpenguin/internet_monitor_rb
           sync_repo hardenedpenguin/cap-alert
           sync_repo hardenedpenguin/AnyTone_CPS
+          sync_repo hardenedpenguin/NicFW_CPS
 
       - name: Copy dispatched .deb URLs
         if: github.event_name == 'repository_dispatch' && github.event.client_payload.deb_urls
