@@ -35,13 +35,24 @@ for cmd in curl jq; do
   fi
 done
 
+# Authenticate API calls when a token is available to avoid GitHub's low
+# anonymous rate limit (60 req/hr per IP), which intermittently fails on
+# shared CI runners. Retries smooth over transient 5xx/network errors.
+gh_token="${GH_TOKEN:-${GITHUB_TOKEN:-}}"
+curl_common=(--fail --silent --show-error --location --retry 5 --retry-delay 3 --retry-connrefused)
+auth_header=()
+if [[ -n "$gh_token" ]]; then
+  auth_header=(--header "Authorization: Bearer ${gh_token}")
+fi
+
 api_url="https://api.github.com/repos/${gh_repo}/releases/latest"
 if [[ -n "$tag" ]]; then
   api_url="https://api.github.com/repos/${gh_repo}/releases/tags/${tag}"
 fi
 
 echo "Fetching release metadata from $api_url ..."
-release_json="$(curl -fsSL "$api_url")"
+release_json="$(curl "${curl_common[@]}" "${auth_header[@]}" \
+  --header "Accept: application/vnd.github+json" "$api_url")"
 release_tag="$(jq -r '.tag_name' <<<"$release_json")"
 asset_count="$(jq '[.assets[] | select(.name | endswith(".deb"))] | length' <<<"$release_json")"
 
@@ -62,7 +73,7 @@ while IFS= read -r line; do
 
   dest="$PACKAGES_DIR/$name"
   echo "Downloading $name ..."
-  curl -fsSL -o "$dest" "$url"
+  curl "${curl_common[@]}" "${auth_header[@]}" -o "$dest" "$url"
 done < <(jq -r '.assets[] | select(.name | endswith(".deb")) | "\(.name)\t\(.browser_download_url)"' <<<"$release_json")
 
 echo "Downloaded release ${release_tag} assets into $PACKAGES_DIR"

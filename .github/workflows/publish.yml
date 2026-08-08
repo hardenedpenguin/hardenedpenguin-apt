@@ -53,6 +53,8 @@ jobs:
           ./scripts/import-from-published-repo.sh || true
 
       - name: Sync GitHub release packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           tag="${{ inputs.release_tag || github.event.client_payload.release_tag || '' }}"
           chmod +x scripts/sync-github-release.sh
