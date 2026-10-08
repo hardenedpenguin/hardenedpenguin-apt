@@ -1,0 +1,31 @@
+# GitHub disables scheduled workflows after 60 days without a commit.
+# This weekly commit is the activity that keeps the publish schedule enabled.
+# It does not match publish.yml path filters, so it does not republish the repo.
+
+name: Keep scheduled workflows active
+
+on:
+  schedule:
+    - cron: '0 12 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Record activity
+        run: |
+          set -euo pipefail
+          mkdir -p .github
+          date -u +%Y-%m-%dT%H:%M:%SZ > .github/last-activity
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/last-activity
+          git commit -m "Record repository activity to keep scheduled workflows enabled."
+          git push
