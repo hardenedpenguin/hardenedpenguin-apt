@@ -40,6 +40,7 @@ After that, install packages with **`apt install`**, **`apt upgrade`**, and **`a
 | `cap-alert` | [cap-alert](https://github.com/hardenedpenguin/cap-alert) NWS weather alerts for AllStar/Asterisk nodes |
 | `anytone` | [AnyTone_CPS](https://github.com/hardenedpenguin/AnyTone_CPS) Linux CPS for Anytone D878UV / D878UV II / D578UV |
 | `nicfw` | [NicFW_CPS](https://github.com/hardenedpenguin/NicFW_CPS) Linux CPS for TIDRADIO TD-H3 (nicFW) |
+| `sm-elite` | [SM-Elite](https://github.com/hardenedpenguin/sm-elite) AllStar node dashboard with live status, node control, announcements, and DVSwitch |
 
 Example:
 
