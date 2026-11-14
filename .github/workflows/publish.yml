@@ -68,12 +68,15 @@ jobs:
         run: |
           tag="${{ inputs.release_tag || github.event.client_payload.release_tag || '' }}"
           chmod +x scripts/sync-github-release.sh
+          # A repo that is gone or has no release is a warning; the packages
+          # already published for it stay in the archive.
           sync_repo() {
             if [[ -n "$tag" ]]; then
-              ./scripts/sync-github-release.sh "$1" "$tag"
+              ./scripts/sync-github-release.sh "$1" "$tag" && return
             else
-              ./scripts/sync-github-release.sh "$1"
+              ./scripts/sync-github-release.sh "$1" && return
             fi
+            echo "::warning title=Release sync skipped::could not fetch the release for $1"
           }
           sync_repo hardenedpenguin/SkywarnPlus-NG
           sync_repo hardenedpenguin/supermon-ng
@@ -81,8 +84,7 @@ jobs:
           sync_repo hardenedpenguin/sayip-reboot-halt-saypublicip
           sync_repo hardenedpenguin/internet_monitor_rb
           sync_repo hardenedpenguin/cap-alert
-          sync_repo hardenedpenguin/AnyTone_CPS
-          sync_repo hardenedpenguin/NicFW_CPS
+          sync_repo hardenedpenguin/CodeplugStudio
           sync_repo hardenedpenguin/sm-elite
 
       - name: Copy dispatched .deb URLs
