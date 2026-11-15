@@ -38,9 +38,7 @@ After that, install packages with **`apt install`**, **`apt upgrade`**, and **`a
 | `sayip-node-utils` | [sayip-reboot-halt-saypublicip](https://github.com/hardenedpenguin/sayip-reboot-halt-saypublicip) SayIP, reboot, and halt via DTMF |
 | `internet-monitor` | [internet_monitor_rb](https://github.com/hardenedpenguin/internet_monitor_rb) Internet connectivity monitor with audio alerts |
 | `cap-alert` | [cap-alert](https://github.com/hardenedpenguin/cap-alert) NWS weather alerts for AllStar/Asterisk nodes |
-| `codeplug-studio` | [CodeplugStudio](https://github.com/hardenedpenguin/CodeplugStudio) multi-radio Linux CPS (Anytone and nicFW), native GTK4 |
-| `anytone` | [CodeplugStudio](https://github.com/hardenedpenguin/CodeplugStudio) Linux CPS for Anytone D878UV / D878UV II / D578UV |
-| `nicfw` | [CodeplugStudio](https://github.com/hardenedpenguin/CodeplugStudio) Linux CPS for TIDRADIO TD-H3 (nicFW) |
+| `codeplug-studio` | [CodeplugStudio](https://github.com/hardenedpenguin/CodeplugStudio) multi-radio Linux CPS (Anytone, nicFW, TYT), native GTK4 — replaces the old `anytone` and `nicfw` packages |
 | `sm-elite` | [SM-Elite](https://github.com/hardenedpenguin/sm-elite) AllStar node dashboard with live status, node control, announcements, and DVSwitch (`.deb12` / `.deb13` suite builds) |
 
 Example:

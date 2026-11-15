@@ -14,8 +14,7 @@ Package repos call `dispatch-apt-publish.yml` after uploading release `.deb` fil
    - sayip-reboot-halt-saypublicip
    - internet_monitor_rb
    - cap-alert
-   - AnyTone_CPS
-   - NicFW_CPS
+   - CodeplugStudio
    - sm-elite
 
 3. Tag and release as usual. The release workflow triggers `repository_dispatch` on this repo, which runs **Publish APT repository**.
